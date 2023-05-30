@@ -22,6 +22,3 @@ P
 database.py,1/2/12d0bfc8adac6eee15262b728a538821e35c98c9
 P
  domain/product/product_schema.py,4/7/47670113e51356dfffe73a5e77628fe6052b104f
-:
-
-crawler.py,9/1/91bafcfeacc4cef4b2fdb24a8d8a40fc9b09a75d
