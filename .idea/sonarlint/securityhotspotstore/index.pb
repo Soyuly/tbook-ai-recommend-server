@@ -22,3 +22,7 @@ P
 	models.py,8/5/85f64e80ba345158acc186d4505f039d4f21420f
 P
  domain/product/product_schema.py,4/7/47670113e51356dfffe73a5e77628fe6052b104f
+@
+requirements.txt,1/9/19359a61ae2446b51b549167b014da2fcf265768
+@
+utils/crawler.py,9/b/9b1b884c68d6fc2b92605286514103228132b6fe

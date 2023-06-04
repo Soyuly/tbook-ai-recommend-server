@@ -1,20 +1,23 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, DECIMAL
 
 from database import Base
 
 
 class Product(Base):
-    __tablename__ = "product"
+    __tablename__ = "products"
 
-    item_id = Column(Integer, primary_key=True)
-    item_name = Column(String(255), nullable=False)
-    item_battery = Column(String(255), nullable=False)
-    item_url = Column(String(255), nullable=True)
-    item_cpu = Column(String(255), nullable=False)
-    item_display = Column(String(255), nullable=False)
-    item_graphic = Column(String(255), nullable=False)
-    item_os = Column(String(255), nullable=False)
-    item_ram = Column(String(255), nullable=False)
-    item_storage = Column(String(255), nullable=False)
-    item_weight = Column(String(255), nullable=False)
-    item_price = Column(Integer, nullable=False)
+    product_id = Column(Integer, primary_key=True, autoincrement=True)
+    product_name = Column(String(255), nullable=True)
+    product_made_by = Column(String(255), nullable=True)
+    product_battery = Column(DECIMAL(10, 2), nullable=True)
+    product_image = Column(String(255), nullable=True)
+    product_cpu = Column(String(255), nullable=True)
+    product_ram_capacity = Column(Integer, nullable=True)
+    product_ram_detail = Column(String(255), nullable=True)
+    product_display_size = Column(String(255), nullable=True)
+    product_display_detail = Column(String(255), nullable=True)
+    product_graphic = Column(String(255), nullable=True)
+    product_storage_capacity = Column(Integer, nullable=True)
+    product_storage_detail = Column(String(255), nullable=True)
+    product_weight = Column(DECIMAL(10, 2), nullable=True)
+    product_price = Column(Integer, nullable=True)
