@@ -51,13 +51,14 @@ def crawling_notebook_info():
 
         time.sleep(2)
 
-        for page_num in range(2, 11):
+        for page_num in range(2, 12):
             # 페이지 HTML 파싱
             html = driver.page_source
             soup = BeautifulSoup(html, "html.parser")
 
+
             # 10 페이지 데이터도 뽑기 위한 예외처리
-            if page_num == 11:
+            if page_num != 12:
                 selector = f'a[onclick="javascript:movePage({page_num}); return false;"]'
 
                 # a 태그 클릭
@@ -149,7 +150,7 @@ def crawling_notebook_info():
             ram_capacity = 999999
             storage_capacity = 999999
             weight_info = 999999
-            weight = 999999
+            weight = 9999
             extracted_capacity = 999999
 
             # '배터리:' 다음의 숫자부터 '/' 이전까지의 부분을 추출
@@ -157,24 +158,34 @@ def crawling_notebook_info():
                 start_index = lst_spec[i].get('파워').find("배터리:")
                 end_index = lst_spec[i].get('파워').find("/", start_index)
                 battery_info = lst_spec[i].get('파워')[start_index + len("배터리:"):end_index]
+                try:
+                    battery_info = float(str(battery_info).replace("Wh", ""))
+                except:
+                    print(battery_info)
+                    battery_info = 9999
 
             if lst_spec[i].get("화면정보") is not None:
                 # '(' 다음의 숫자부터 '인치'까지의 부분을 추출
                 start_index = lst_spec[i].get("화면정보").find("(")
                 end_index = lst_spec[i].get("화면정보").find(")", start_index)
-                inch_info = lst_spec[i].get("화면정보")[start_index + 1:end_index-2]
+                inch_info = lst_spec[i].get("화면정보")[start_index + 1:end_index - 2]
 
             # '램 용량:' 다음의 숫자부터 '/' 이전까지의 부분을 추출
             if lst_spec[i].get("램") is not None:
                 start_index = lst_spec[i].get("램").find("램 용량:")
                 end_index = lst_spec[i].get("램").find("/", start_index)
-                ram_capacity = lst_spec[i].get("램")[start_index + len("램 용량:"):end_index-2]
+                ram_capacity = lst_spec[i].get("램")[start_index + len("램 용량:"):end_index - 2]
+
+                try:
+                    ram_capacity = int(ram_capacity)
+                except:
+                    print(ram_capacity)
+                    ram_capacity = 9999
 
             # '/' 이전의 부분을 추출
             if lst_spec[i].get("저장장치") is not None:
                 end_index = lst_spec[i].get("저장장치").find("/", 2)
                 storage_capacity = lst_spec[i].get("저장장치").split('/')[1]
-
 
                 if storage_capacity.endswith("GB"):
                     extracted_capacity = storage_capacity.replace("GB", "")
@@ -198,8 +209,14 @@ def crawling_notebook_info():
                         print(weight_info)
 
 
+            if lst_price[i] == "일시품절":
+                lst_price[i] = 999999
+            else:
+                if type(lst_price[i]) == str:
+                    lst_price[i] = lst_price[i].replace(',', '')
+
             db_product = Product(
-                product_made_by= lst_title[i].split(' ')[0],
+                product_made_by=lst_title[i].split(' ')[0],
                 product_name=" ".join(lst_title[i].split(' ')[1:]),
                 product_battery=str(battery_info).replace("Wh", ""),
                 product_image="https:" + lst_name[i],
@@ -212,7 +229,8 @@ def crawling_notebook_info():
                 product_storage_capacity=extracted_capacity,
                 product_storage_detail=lst_spec[i].get("저장장치"),
                 product_weight=weight_info,
-                product_price=lst_price[i].replace(',', ''),
+                product_price=lst_price[i],
+                product_stock=10
             )
 
             db_product_list.append(db_product)
@@ -222,20 +240,20 @@ def crawling_notebook_info():
                 '이미지 URL': "https:" + lst_name[i],
                 '노트북 이름': " ".join(lst_title[i].split(' ')[1:]),
                 '배터리': str(battery_info).replace("Wh", ""),
-                '가격': lst_price[i].replace(',', ''),
+                '가격': lst_price[i],
                 '화면크기': inch_info,
                 '램 용량': ram_capacity,
                 "저장용량": storage_capacity,
                 "무게": weight_info
             }
 
+            if i % 91 == 0:
+                print(result_dict)
+
             result_dict.update(lst_spec[i])
             result_list.append(result_dict)
 
-        # 결과 출력
 
-        for key, value in result_list[2].items():
-            print(f"{key}: {value}")
 
         return db_product_list
 

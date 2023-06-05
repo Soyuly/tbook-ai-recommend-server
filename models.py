@@ -21,3 +21,4 @@ class Product(Base):
     product_storage_detail = Column(String(255), nullable=True)
     product_weight = Column(DECIMAL(10, 2), nullable=True)
     product_price = Column(Integer, nullable=True)
+    product_stock = Column(Integer, nullable=True)

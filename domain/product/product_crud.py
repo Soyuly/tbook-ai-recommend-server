@@ -27,6 +27,7 @@ def export_product_csv(db: Session):
     result = db.query(Product).all()
 
     df = pd.DataFrame([{
+        "id": p.product_id,
         '제조사': p.product_made_by,
         '이름': p.product_name,
         '배터리': p.product_battery,
