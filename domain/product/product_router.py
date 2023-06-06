@@ -1,17 +1,23 @@
-from apscheduler.schedulers.background import BackgroundScheduler
+from typing import List
+
+
 from fastapi import APIRouter, Depends
-from fastapi_amis_admin.admin import AdminSite, Settings
-from fastapi_scheduler import SchedulerAdmin
+
 from sqlalchemy.orm import Session
-from fastapi.responses import FileResponse
+
 from database import get_db
 from domain.product import product_schema
-from domain.product.product_crud import create_product_bulk_insert, export_product_csv
+from domain.product.product_crud import create_product_bulk_insert, product_recommend_api, get_product_distinct_made_by_list
+from domain.product.product_schema import ProductResponse, ProductRecommendRequest, ProductRecommendResponse
 from models import Product
 
 router = APIRouter(
     prefix="/api/v1/product",
 )
+
+@router.get('/unique')
+def get_product_distinct(db: Session = Depends(get_db)):
+    get_product_distinct_made_by_list(db)
 
 
 @router.get("/list", response_model=list[product_schema.ProductResponse])
@@ -26,8 +32,6 @@ def crawling(db: Session = Depends(get_db)):
     create_product_bulk_insert(db=db)
 
 
-@router.get("/recommend")
-def recommend(db: Session = Depends(get_db)):
-    export_product_csv(db=db)
-    csv_filename = "products.csv"
-    return FileResponse(f"static/{csv_filename}", media_type="text/csv", filename=csv_filename)
+@router.post("/recommend", response_model=List[ProductRecommendResponse])
+def recommend(data: ProductRecommendRequest, db: Session = Depends(get_db)):
+    return product_recommend_api(db=db, data=data)

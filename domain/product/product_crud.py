@@ -1,18 +1,23 @@
 import pandas as pd
 from fastapi import Depends
+from sqlalchemy import select
 
 from database import get_db
+from domain.product.product_schema import ProductRecommendRequest
+from domain.product.recommend import product_recommend
 from models import Product
 from sqlalchemy.orm import Session
 
 from utils.crawler import crawling_notebook_info
 
 
-def get_product_list(db: Session):
-    product_list = db.query(Product) \
-        .all()
+def get_product_distinct_made_by_list(db: Session):
+    unique_made_by = db.query(Product.product_made_by).distinct().all()
+    manufacturer_list = [item[0] for item in unique_made_by]
 
-    return product_list
+
+    print(unique_made_by)
+
 
 
 def create_product_bulk_insert(db: Session):
@@ -22,7 +27,8 @@ def create_product_bulk_insert(db: Session):
     return {"message": "success"}
 
 
-def export_product_csv(db: Session):
+def product_recommend_api(db: Session, data: ProductRecommendRequest):
+    print(data)
     # 전체 데이터 가져오기
     result = db.query(Product).all()
 
@@ -45,7 +51,6 @@ def export_product_csv(db: Session):
         # 다른 속성들도 필요한 경우에 추가
     } for p in result])
 
-    csv_filename = "products.csv"
-    df.to_csv(f"static/{csv_filename}", index=False, encoding='utf-8-sig')
+    return product_recommend(df, data.ids)
 
 

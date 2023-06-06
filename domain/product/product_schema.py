@@ -17,3 +17,14 @@ class ProductResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class ProductRecommendResponse(BaseModel):
+    product_id: int
+    product_image: str
+    product_name: str
+    similarity: float
+
+
+class ProductRecommendRequest(BaseModel):
+    ids: list
