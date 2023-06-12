@@ -82,6 +82,7 @@ def product_recommend(df, viewed_id):
 
     user_1 = make_user_embedding(user_category_1.index.values.tolist(), data_sepc_content, model)
 
+
     result_index, cos = get_recommend_contents(user_1, data_sepc_content, model)
 
     filtered_ids_set = set(filtered_ids)
@@ -91,7 +92,7 @@ def product_recommend(df, viewed_id):
 
     cos_similarity = cos[result_index]
     cos_similarity_rounded = cos_similarity * 100
-    print(cos_similarity_rounded)
+
     result_data['유사도'] = cos_similarity_rounded
 
     data_list = result_data.to_dict('records')

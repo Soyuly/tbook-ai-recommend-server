@@ -6,6 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from domain.product import product_router
 from utils.crawler import crawling_notebook_info
+import uvicorn
 
 app = FastAPI()
 
@@ -32,3 +33,7 @@ def job1():
 scheduler.add_job(job1, 'interval', seconds=87600, id="crawling")
 scheduler.start()
 app.include_router(product_router.router)
+
+
+# if __name__ == '__main__':
+#     uvicorn.run(app, host='0.0.0.0', port=8000)

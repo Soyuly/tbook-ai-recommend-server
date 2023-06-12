@@ -28,7 +28,6 @@ def create_product_bulk_insert(db: Session):
 
 
 def product_recommend_api(db: Session, data: ProductRecommendRequest):
-    print(data)
     # 전체 데이터 가져오기
     result = db.query(Product).all()
 
